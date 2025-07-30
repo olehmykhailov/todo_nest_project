@@ -4,6 +4,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from './business-layer/auth/auth.module';
 import { TasksModule } from './business-layer/tasks/tasks.module';
 import { UsersModule } from './business-layer/users/users.module';
+import { DataLayerModule } from './data-layer/data.layer.module';
 import { UserEntity } from './data-layer/entities/user.entity';
 import { TaskEntity } from './data-layer/entities/task.entity';
 
@@ -26,7 +27,7 @@ import { TaskEntity } from './data-layer/entities/task.entity';
     TypeOrmModule.forFeature(
       [UserEntity, TaskEntity]
     ),
-    AuthModule, TasksModule, UsersModule],
+    AuthModule, TasksModule, UsersModule, DataLayerModule],
   controllers: [],
   providers: [],
 })
