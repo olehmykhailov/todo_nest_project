@@ -14,7 +14,7 @@ export class AuthController {
     }
 
     @Post('sign-in')
-    async signIn(@Body() signInDto: SignInDto): Promise<AuthResponseDto> {
+    async signIn(@Body() signInDto: SignInDto): Promise<AuthResponseDto | null> {
         return this.authService.signIn(signInDto);
     }
 }
