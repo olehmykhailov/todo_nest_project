@@ -1,0 +1,13 @@
+import { IsString } from "class-validator";
+
+export class TaskRequestDto {
+
+    @IsString()
+    title: string;
+
+    @IsString()
+    description: string;
+
+    @IsString()
+    userId: string;
+}
