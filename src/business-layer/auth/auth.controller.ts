@@ -1,12 +1,15 @@
-import { Controller, Post, Body } from '@nestjs/common';
+import { Controller, Post, Body, Get } from '@nestjs/common';
 import { AuthService } from './auth.service';
+import { JwtTokenService } from './jwt/jwt.service';
 import { SignUpDto } from './dtos/signup.dto';
 import { SignInDto } from './dtos/signin.dto';
 import { AuthResponseDto } from './dtos/auth.response.dto';
 
 @Controller('auth')
 export class AuthController {
-    constructor(private readonly authService: AuthService) {}
+    constructor(
+        private readonly authService: AuthService,
+    ) {}
 
     @Post('sign-up')
     async signUp(@Body() signUpDto: SignUpDto): Promise<AuthResponseDto> {
@@ -16,5 +19,10 @@ export class AuthController {
     @Post('sign-in')
     async signIn(@Body() signInDto: SignInDto): Promise<AuthResponseDto | null> {
         return this.authService.signIn(signInDto);
+    }
+
+    @Post('refresh-token')
+    async refreshToken(@Body('refreshToken') refreshToken: string): Promise<AuthResponseDto | null> {
+        return this.authService.refreshToken(refreshToken);
     }
 }
