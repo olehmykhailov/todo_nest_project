@@ -38,6 +38,10 @@ export class AuthService {
 
     async signUp(signUpDto: SignUpDto): Promise<AuthResponseDto> {
         const hashedPassword = await this.utilsService.hashPassword(signUpDto.password);
+        const existingUser = await this.usersRepositoryProvider.findByEmail(signUpDto.email);
+        if (existingUser) {
+            throw new Error('User with this email already exists');
+        }
         const user = await this.usersRepositoryProvider.createUser({
             email: signUpDto.email,
             password: hashedPassword,
