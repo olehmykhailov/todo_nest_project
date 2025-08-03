@@ -5,6 +5,7 @@ import { JwtTokenService } from './jwt/jwt.service';
 import { UsersRepositoryProvider } from 'src/data-layer/providers/user.repository.provider';
 import { UtilsService } from '../utils/utils.service';
 import { SignUpDto } from './dtos/signup.dto';
+import { PayloadInterface } from './interfaces/payload.interface';
 
 @Injectable()
 export class AuthService {
@@ -37,6 +38,10 @@ export class AuthService {
 
     async signUp(signUpDto: SignUpDto): Promise<AuthResponseDto> {
         const hashedPassword = await this.utilsService.hashPassword(signUpDto.password);
+        const existingUser = await this.usersRepositoryProvider.findByEmail(signUpDto.email);
+        if (existingUser) {
+            throw new Error('User with this email already exists');
+        }
         const user = await this.usersRepositoryProvider.createUser({
             email: signUpDto.email,
             password: hashedPassword,
@@ -56,5 +61,32 @@ export class AuthService {
         response.firstName = user.firstName;
         response.lastName = user.lastName;
         return response;
+    }
+
+    async refreshToken(refreshToken: string): Promise<AuthResponseDto | null> {
+        try {
+            const payload = this.jwtTokenService.verifyRefreshToken(refreshToken); // Проверка подписи
+            if (!payload) return null;
+
+            const user = await this.usersRepositoryProvider.findById(payload.sub);
+            if (!user) return null;
+
+            const newPayload = { sub: user.id, email: user.email };
+            const newAccessToken = this.jwtTokenService.generateAccessToken(newPayload);
+            const newRefreshToken = this.jwtTokenService.generateRefreshToken(newPayload);
+
+            const response = new AuthResponseDto();
+            response.accessToken = newAccessToken;
+            response.refreshToken = newRefreshToken;
+            response.userId = user.id;
+            response.email = user.email;
+            response.firstName = user.firstName ?? '';
+            response.lastName = user.lastName ?? '';
+
+            return response;
+        } catch (e) {
+            console.error('Refresh token invalid:', e.message);
+            return null;
+        }
     }
 }
