@@ -5,7 +5,8 @@ import { JwtTokenService } from './jwt/jwt.service';
 import { UsersRepositoryProvider } from 'src/data-layer/providers/user.repository.provider';
 import { UtilsService } from '../utils/utils.service';
 import { SignUpDto } from './dtos/signup.dto';
-import { PayloadInterface } from './interfaces/payload.interface';
+import { RedisService } from '../redis/redis.service';
+
 
 @Injectable()
 export class AuthService {
@@ -13,6 +14,7 @@ export class AuthService {
         private readonly jwtTokenService: JwtTokenService,
         private readonly usersRepositoryProvider: UsersRepositoryProvider,
         private readonly utilsService: UtilsService,
+        private readonly redisService: RedisService,
     ) {}
 
     async signIn(signInDto: SignInDto): Promise<AuthResponseDto | null> {
@@ -33,6 +35,8 @@ export class AuthService {
         response.email = user.email;
         response.firstName = user.firstName;
         response.lastName = user.lastName;
+        this.redisService.set(`refreshToken:${user.id}`, refreshToken, 60 * 60 * 24 * 30); // Store refresh token in Redis for 30 days
+        this.redisService.set(`user:${user.id}`, JSON.stringify(response), 60 * 60 * 24 * 30);
         return response;
     }
 
@@ -60,6 +64,8 @@ export class AuthService {
         response.email = user.email;
         response.firstName = user.firstName;
         response.lastName = user.lastName;
+        this.redisService.set(`refreshToken:${user.id}`, refreshToken, 60 * 60 * 24 * 30); // Store refresh token in Redis for 30 days
+        this.redisService.set(`user:${user.id}`, JSON.stringify(response), 60 * 60 * 24 * 30); // Store user data in Redis for 30 days
         return response;
     }
 

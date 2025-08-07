@@ -7,6 +7,8 @@ import { JwtModule } from '@nestjs/jwt';
 import { JwtTokenService } from './jwt/jwt.service';
 import { DataLayerModule } from 'src/data-layer/data.layer.module';
 import { UtilsModule } from '../utils/utils.module';
+import { RedisModule } from '../redis/redis.module';
+
 
 @Module({
     imports:
@@ -16,7 +18,7 @@ import { UtilsModule } from '../utils/utils.module';
         secret: process.env.JWT_SECRET,
         signOptions: { expiresIn: '1h' },
       }),
-      DataLayerModule, UtilsModule
+      DataLayerModule, UtilsModule, RedisModule
 
     ],
     providers: [AuthService, JwtStrategy, JwtTokenService],

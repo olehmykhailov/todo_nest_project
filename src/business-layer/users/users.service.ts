@@ -1,13 +1,20 @@
 import { Injectable } from '@nestjs/common';
 import { UserResponseDto } from './dtos/user.response.dto';
 import { UsersRepositoryProvider } from 'src/data-layer/providers/user.repository.provider';
+import { RedisService } from '../redis/redis.service';
 
 @Injectable()
 export class UsersService {
     constructor(
-        private readonly usersRepository: UsersRepositoryProvider
+        private readonly usersRepository: UsersRepositoryProvider,
+        private readonly redisService: RedisService,
     ) {}
     async getUserById(id: string): Promise<UserResponseDto> {
+        const cachedUser = await this.redisService.get(`user:${id}`);
+        if (cachedUser) {
+            return JSON.parse(cachedUser) as UserResponseDto;
+        }
+        
         const user = await this.usersRepository.findById(id);
         if (!user) {
             throw new Error('User not found');
