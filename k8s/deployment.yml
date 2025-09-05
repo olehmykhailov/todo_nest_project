@@ -12,6 +12,7 @@ spec:
       labels:
         app: todo-app
     spec:
+      serviceAccountName: ci-cd-sa
       containers:
         - name: todo-app
           image: europe-west4-docker.pkg.dev/wide-net-466915-c6/todo-nest-app-repo/todo-app:latest
@@ -28,16 +29,16 @@ spec:
               cpu: "250m"
               memory: "256Mi"
           ports:
-            - containerPort: 5000
+            - containerPort: 3000
           readinessProbe:
             httpGet:
               path: /health
-              port: 5000
+              port: 3000
             initialDelaySeconds: 5
             periodSeconds: 10
           livenessProbe:
             httpGet:
               path: /health
-              port: 5000
+              port: 3000
             initialDelaySeconds: 15
             periodSeconds: 20
