@@ -33,12 +33,12 @@ spec:
           readinessProbe:
             httpGet:
               path: api/health
-              port: 3000
+              port: 80
             initialDelaySeconds: 5
             periodSeconds: 10
           livenessProbe:
             httpGet:
               path: api/health
-              port: 3000
+              port: 80
             initialDelaySeconds: 15
             periodSeconds: 20
