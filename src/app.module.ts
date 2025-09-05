@@ -8,6 +8,7 @@ import { DataLayerModule } from './data-layer/data.layer.module';
 import { UserEntity } from './data-layer/entities/user.entity';
 import { TaskEntity } from './data-layer/entities/task.entity';
 import { RedisModule } from './business-layer/redis/redis.module';
+import { LivelinessModule } from './business-layer/liveliness/liveliness.module';
 
 @Module({
   imports: [
@@ -28,7 +29,7 @@ import { RedisModule } from './business-layer/redis/redis.module';
     TypeOrmModule.forFeature(
       [UserEntity, TaskEntity]
     ),
-    AuthModule, TasksModule, UsersModule, DataLayerModule, RedisModule],
+    AuthModule, TasksModule, UsersModule, DataLayerModule, RedisModule, LivelinessModule],
   controllers: [],
   providers: [],
 })
