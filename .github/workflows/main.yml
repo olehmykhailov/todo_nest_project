@@ -55,6 +55,10 @@ jobs:
       - name: Deploy to GKE
         run: |
           IMAGE_REGISTRY="${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/todo-nest-app-repo"
+          kubectl apply -f k8s/config-map.yml
+          kubectl apply -f k8s/secret.yml
+          kubectl apply -f k8s/deployment.yml
+          kubectl apply -f k8s/service.yml
           
 
 
