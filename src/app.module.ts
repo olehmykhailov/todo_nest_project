@@ -24,7 +24,7 @@ import { LivelinessModule } from './business-layer/liveliness/liveliness.module'
       password: process.env.DB_PASSWORD || '',
       database: process.env.DB_NAME,
       autoLoadEntities: true,
-      synchronize: true, // Set to false in production
+      synchronize: false, // Set to false in production
     }),
     TypeOrmModule.forFeature(
       [UserEntity, TaskEntity]
