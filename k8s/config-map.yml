@@ -3,7 +3,7 @@ kind: ConfigMap
 metadata:
   name: todo-config
 data:
-  DB_HOST: "34.78.74.54"
+  DB_HOST: "172.22.192.3"
   DB_PORT: "3306"
   DB_NAME: "todo_db"
   REDIS_HOST: "10.115.208.36"
