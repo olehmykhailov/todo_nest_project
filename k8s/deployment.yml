@@ -12,7 +12,7 @@ spec:
       labels:
         app: todo-app
     spec:
-      serviceAccountName: ci-cd-sa
+      serviceAccountName: todo-app-sa
       containers:
         - name: todo-app
           image: europe-west4-docker.pkg.dev/wide-net-466915-c6/todo-nest-app-repo/todo-app:latest
