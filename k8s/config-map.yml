@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: todo-config
+  namespace: todo
+data:
+  DB_HOST: 34.78.74.54
+  DB_PORT: 3306
+  DB_NAME: todo_db
+  REDIS_HOST: 10.115.208.36
+  REDIS_PORT: 6739
