@@ -17,41 +17,44 @@ jobs:
       IMAGE_TAG: ${{ github.sha }}
 
     steps:
-
-      
       - name: Checkout code
         uses: actions/checkout@v3
 
-      
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run tests
+        run: npm run test -- --ci --passWithNoTests
+
       - name: Set up GCP credentials
         uses: google-github-actions/auth@v1
         with:
           credentials_json: ${{ secrets.GCP_KEY }}
 
-      
       - name: Configure Docker
         run: gcloud auth configure-docker ${{ env.REGION }}-docker.pkg.dev --quiet
 
-      
       - name: Get GKE credentials
         uses: google-github-actions/get-gke-credentials@v1
         with:
           cluster_name: ${{ env.CLUSTER_NAME }}
           location: ${{ env.CLUSTER_LOCATION }}
 
-      
       - name: Build Docker images
         run: |
           IMAGE_REGISTRY="${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/todo-nest-app-repo"
           docker build -t "$IMAGE_REGISTRY/todo-app:${{ env.IMAGE_TAG }}" .
 
-      
       - name: Push Docker images
         run: |
           IMAGE_REGISTRY="${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/todo-nest-app-repo"
           docker push "$IMAGE_REGISTRY/todo-app:${{ env.IMAGE_TAG }}"
 
-      
       - name: Deploy to GKE
         run: |
           IMAGE_REGISTRY="${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/todo-nest-app-repo"
@@ -59,10 +62,6 @@ jobs:
           kubectl apply -f k8s/secret.yml
           kubectl apply -f k8s/deployment.yml
           kubectl apply -f k8s/service.yml
-          
-
 
           kubectl set image deployment/todo-app todo-app="$IMAGE_REGISTRY/todo-app:${{ env.IMAGE_TAG }}"
-
-
           kubectl rollout status deployment/todo-app --timeout=5m
