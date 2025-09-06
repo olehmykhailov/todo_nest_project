@@ -20,7 +20,7 @@ spec:
             - configMapRef:
                 name: todo-config
             - secretRef:
-                name: todo-secret
+                name: app-secrets
           resources:
             limits:
               cpu: "1"
