@@ -54,12 +54,24 @@ jobs:
         run: |
           IMAGE_REGISTRY="${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/todo-nest-app-repo"
           docker push "$IMAGE_REGISTRY/todo-app:${{ env.IMAGE_TAG }}"
+      - name: Create Secrets
+        env:
+          DB_USER_SECRET: ${{ secrets.DB_USER }}
+          DB_PASSWORD_SECRET: ${{ secrets.DB_PASSWORD }}
+          JWT_ACCESS_SECRET_VALUE: ${{ secrets.JWT_ACCESS_SECRET }}
+          JWT_REFRESH_SECRET_VALUE: ${{ secrets.JWT_REFRESH_SECRET }}
+        run: |
+          kubectl create secret generic app-secrets \
+            --from-literal=DB_USER="$DB_USER_SECRET" \
+            --from-literal=DB_PASSWORD="$DB_PASSWORD_SECRET" \
+            --from-literal=JWT_ACCESS_SECRET="$JWT_ACCESS_SECRET_VALUE" \
+            --from-literal=JWT_REFRESH_SECRET="$JWT_REFRESH_SECRET_VALUE" \
+            --dry-run=client -o yaml | kubectl apply -f -
 
       - name: Deploy to GKE
         run: |
           IMAGE_REGISTRY="${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/todo-nest-app-repo"
           kubectl apply -f k8s/config-map.yml
-          kubectl apply -f k8s/secret.yml
           kubectl apply -f k8s/deployment.yml
           kubectl apply -f k8s/service.yml
 
