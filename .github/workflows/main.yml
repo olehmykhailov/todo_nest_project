@@ -57,11 +57,10 @@ jobs:
       - name: Create Secrets
         run: |
           kubectl create secret generic app-secrets \
-            --from-literal=DB_HOST=${{ secrets.DB_HOST }} \
             --from-literal=DB_USER=${{ secrets.DB_USER }} \
             --from-literal=DB_PASSWORD=${{ secrets.DB_PASSWORD }} \
-            --from-literal=DB_NAME=${{ secrets.DB_NAME }} \
-            --from-literal=JWT_SECRET=${{ secrets.JWT_SECRET }} \
+            --from-literal=JWT_ACCESS_SECRET=${{ secrets.JWT_ACCESS_SECRET }} \
+            --from-literal=JWT_REFRESH_SECRET=${{ secrets.JWT_REFRESH_SECRET }} \
             --dry-run=client -o yaml | kubectl apply -f -
 
       - name: Deploy to GKE
